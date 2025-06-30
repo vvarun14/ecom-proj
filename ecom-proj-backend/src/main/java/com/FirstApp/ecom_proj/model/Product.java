@@ -106,19 +106,19 @@ public class Product {
         this.releaseDate = releaseDate;
     }
 
-    public boolean isAvailable() {
+    public boolean isProductAvailable() {
         return productAvailable;
     }
 
-    public void setAvailable(boolean available) {
+    public void setProductAvailable(boolean available) {
         this.productAvailable = available;
     }
 
-    public int getQuantity() {
+    public int getStockQuantity() {
         return stockQuantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setStockQuantity(int quantity) {
         this.stockQuantity = quantity;
     }
 

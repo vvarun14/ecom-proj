@@ -45,9 +45,11 @@ public class ProductController {
         }
     }
 
-    @PostMapping("/product/{productId}/image")
-    public ResponseEntity<byte[]> getImageByProductId(@PathVariable int productId) {
-        Product product = service.getProductById(productId);
+    @GetMapping("/product/{Id}/image")
+    public ResponseEntity<byte[]> getImageByProductId(@PathVariable int Id) {
+
+        Product product = service.getProductById(Id);
+        System.out.println(product);
         byte[] imageFile = product.getImageData();
 
         return ResponseEntity.ok().contentType(MediaType.valueOf(product.getImageType())).body(imageFile);
