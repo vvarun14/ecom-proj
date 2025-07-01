@@ -3,13 +3,13 @@ package com.FirstApp.ecom_proj.controller;
 import com.FirstApp.ecom_proj.model.Product;
 import com.FirstApp.ecom_proj.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -49,11 +49,45 @@ public class ProductController {
     public ResponseEntity<byte[]> getImageByProductId(@PathVariable int Id) {
 
         Product product = service.getProductById(Id);
-        System.out.println(product);
         byte[] imageFile = product.getImageData();
 
         return ResponseEntity.ok().contentType(MediaType.valueOf(product.getImageType())).body(imageFile);
     }
 
+    @PutMapping("/product/{productId}")
+    public ResponseEntity<?> getProductById(@PathVariable int productId, @RequestPart Product product,
+                                            @RequestPart MultipartFile imageFile) {
+
+        Product product1 = null;
+        try {
+            product1 = service.updateProduct(product, productId, imageFile);
+        } catch (IOException e) {
+            return new ResponseEntity<>("Failed to update", HttpStatus.BAD_REQUEST);
+        }
+
+        if(product1 != null) {
+            return new ResponseEntity<>("Updated", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Failed to update", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/product/{productId}")
+    public ResponseEntity<String> deleteProduct(@PathVariable int productId) {
+        Product product = service.getProductById(productId);
+        if(product != null) {
+            service.deleteProduct(productId);
+            return new ResponseEntity<>("Delete Successful", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Product not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/products/search")
+    public ResponseEntity<List<Product>> searchProducts(@RequestParam String keyword) {
+        List<Product> products = service.searchProducts(keyword);
+        System.out.println("Searching with: " +keyword);
+        return new ResponseEntity<>(products, HttpStatus.OK);
+    }
 
 }
